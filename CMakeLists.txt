@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.0.0)
 
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/libraries/Arduino-CMake-Toolchain/Arduino-toolchain.cmake")
 
-#set(ARDUINO_BOARD "Arduino Uno [avr.uno]") # Arduino Uno
-#set(ARDUINO_BOARD "Arduino Mega or Mega 2560 [avr.mega]") # Arduino Mega or Mega 2560
+# See BoardOptions.cmake in the build directory for more options.
+# Note however, that Keyboard and Mouse are currently only supported on 32u5 chips.
 set(ARDUINO_BOARD "avr.micro") # Arduino Micro
 
 project(KeyboardSimulator C CXX)
