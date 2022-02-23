@@ -17,7 +17,6 @@ add_executable(${TARGET_NAME}
 # global Arduino libraries
 target_link_arduino_libraries(${TARGET_NAME}
     PRIVATE core
-    PRIVATE Wire
     PRIVATE Keyboard
 )
 

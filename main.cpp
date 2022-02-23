@@ -27,19 +27,21 @@
 #include <Keyboard.h>
 
 
-void setup() {
-  // open the serial port:
-  Serial.begin(9600);
-  // initialize control over the keyboard:
-  Keyboard.begin();
+void setup()
+{
+    // initialize control over the keyboard:
+    Keyboard.begin(KeyboardLayout_de_DE);
+
+    // Wait for Arduino to be up and running.
+    delay(1000);
+
+    // Type the next ASCII value from what you received:
+    Keyboard.print("Hello World!");
+    // finalize
+    Keyboard.end();
 }
 
-void loop() {
-  // check for incoming serial data:
-  if (Serial.available() > 0) {
-    // read incoming serial data:
-    char inChar = Serial.read();
-    // Type the next ASCII value from what you received:
-    Keyboard.write(inChar + 1);
-  }
+void loop()
+{
+    // do nothing
 }
