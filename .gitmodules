@@ -1,0 +1,3 @@
+[submodule "libraries/Arduino-CMake-Toolchain"]
+	path = libraries/Arduino-CMake-Toolchain
+	url = ../libraries/Arduino-CMake-Toolchain.git
