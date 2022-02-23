@@ -35,8 +35,9 @@ void setup()
     // Wait for Arduino to be up and running.
     delay(1000);
 
-    // Type the next ASCII value from what you received:
+    // Type "Hello World!".
     Keyboard.print("Hello World!");
+    Keyboard.write(KEY_RETURN);
     // finalize
     Keyboard.end();
 }
