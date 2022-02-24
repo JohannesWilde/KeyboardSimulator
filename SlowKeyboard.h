@@ -22,6 +22,8 @@
 #ifndef KEYBOARD_h
 #define KEYBOARD_h
 
+#define _USING_HID
+
 #include "HID.h"
 
 #if !defined(_USING_HID)
@@ -93,26 +95,40 @@ extern const uint8_t KeyboardLayout_it_IT[];
 // Low level key report: up to 6 keys and shift, ctrl etc at once
 typedef struct
 {
-  uint8_t modifiers;
-  uint8_t reserved;
-  uint8_t keys[6];
+    uint8_t modifiers;
+    uint8_t reserved;
+    uint8_t keys[6];
 } KeyReport;
 
 class Keyboard_ : public Print
 {
 private:
-  KeyReport _keyReport;
-  const uint8_t *_asciimap;
-  void sendReport(KeyReport* keys);
+    KeyReport _keyReport;
+    const uint8_t *_asciimap;
+    void sendReport(KeyReport* keys);
+
+    Keyboard_(Keyboard_ const & other) = delete;
+    Keyboard_ & operator=(Keyboard_ const & other) = delete;
+    Keyboard_(Keyboard_ && other) = delete;
+    Keyboard_ & operator=(Keyboard_ && other) = delete;
+
 public:
-  Keyboard_(void);
-  void begin(const uint8_t *layout = KeyboardLayout_en_US);
-  void end(void);
-  size_t write(uint8_t k);
-  size_t write(const uint8_t *buffer, size_t size);
-  size_t press(uint8_t k);
-  size_t release(uint8_t k);
-  void releaseAll(void);
+    Keyboard_(void);
+    void begin(const uint8_t *layout = KeyboardLayout_en_US);
+    void end(void);
+    size_t write(uint8_t k);
+    size_t write(const uint8_t *buffer, size_t size);
+    size_t press(uint8_t k);
+    size_t release(uint8_t k);
+    void releaseAll(void);
+
+    unsigned long minimumReportDelayUs;
+
+protected:
+
+    void waitTillAndLogNextReportTime_();
+
+    unsigned long lastReportTimeUs_;
 };
 extern Keyboard_ Keyboard;
 

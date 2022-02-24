@@ -24,22 +24,29 @@
 #define __AVR_ATmega32U4__
 
 #include <Arduino.h>
-#include <Keyboard.h>
+#include <Wire.h>
+
+#include "SlowKeyboard.h"
 
 
 void setup()
 {
     // initialize control over the keyboard:
-    Keyboard.begin(KeyboardLayout_de_DE);
+    Keyboard_ & slowKeyboard = Keyboard;
+//    slowKeyboard.minimumReportDelayUs = 8000;
+
+    slowKeyboard.begin(KeyboardLayout_de_DE);
 
     // Wait for Arduino to be up and running.
-    delay(1000);
+    delay(2000);
 
     // Type "Hello World!".
-    Keyboard.print("Hello World!");
+    slowKeyboard.print("Hello, World!");
+
     Keyboard.write(KEY_RETURN);
+
     // finalize
-    Keyboard.end();
+    slowKeyboard.end();
 }
 
 void loop()

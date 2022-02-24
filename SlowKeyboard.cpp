@@ -19,8 +19,10 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "Keyboard.h"
+#include "SlowKeyboard.h"
 #include "KeyboardLayout.h"
+
+#include <Arduino.h>
 
 #if defined(_USING_HID)
 
@@ -62,6 +64,8 @@ static const uint8_t _hidReportDescriptor[] PROGMEM = {
 };
 
 Keyboard_::Keyboard_(void)
+    : minimumReportDelayUs(16667ul)
+    , lastReportTimeUs_(micros() - 5000000ul) // assume at most 5s delay for now
 {
     static HIDSubDescriptor node(_hidReportDescriptor, sizeof(_hidReportDescriptor));
     HID().AppendDescriptor(&node);
@@ -79,6 +83,7 @@ void Keyboard_::end(void)
 
 void Keyboard_::sendReport(KeyReport* keys)
 {
+    waitTillAndLogNextReportTime_();
     HID().SendReport(2,keys,sizeof(KeyReport));
 }
 
@@ -117,8 +122,8 @@ size_t Keyboard_::press(uint8_t k)
     // Add k to the key report only if it's not already present
     // and if there is an empty slot.
     if (_keyReport.keys[0] != k && _keyReport.keys[1] != k &&
-        _keyReport.keys[2] != k && _keyReport.keys[3] != k &&
-        _keyReport.keys[4] != k && _keyReport.keys[5] != k) {
+            _keyReport.keys[2] != k && _keyReport.keys[3] != k &&
+            _keyReport.keys[4] != k && _keyReport.keys[5] != k) {
 
         for (i=0; i<6; i++) {
             if (_keyReport.keys[i] == 0x00) {
@@ -208,6 +213,18 @@ size_t Keyboard_::write(const uint8_t *buffer, size_t size) {
     }
     return n;
 }
+
+void Keyboard_::waitTillAndLogNextReportTime_()
+{
+    unsigned long now = 0;
+    do
+    {
+        now = micros();
+    }
+    while ((now - lastReportTimeUs_) < minimumReportDelayUs);
+    lastReportTimeUs_ = now;
+}
+
 
 Keyboard_ Keyboard;
 
