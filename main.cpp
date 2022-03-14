@@ -28,6 +28,13 @@
 
 #include "SlowKeyboard.h"
 
+namespace Pins
+{
+
+uint8_t constexpr button = 7; // PE6, Int4
+uint8_t constexpr led = 11;
+
+} // namespace Pin
 
 void setup()
 {
@@ -38,7 +45,16 @@ void setup()
     slowKeyboard.begin(KeyboardLayout_de_DE);
 
     // Wait for Arduino to be up and running.
-    delay(2000);
+//    delay(2000);
+    for (unsigned index = 0; index < 2; ++index)
+    {
+        pinMode(Pins::led, OUTPUT);
+        digitalWrite(Pins::led, HIGH);   // turn the LED on (HIGH is the voltage level)
+        delay(500);                       // wait for a second
+        digitalWrite(Pins::led, LOW);    // turn the LED off by making the voltage LOW
+        delay(500);                       // wait for a second
+        pinMode(Pins::led, INPUT);
+    }
 
     // Type "Hello World!".
     slowKeyboard.print("Hello, World!");
