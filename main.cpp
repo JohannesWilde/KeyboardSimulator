@@ -23,68 +23,73 @@
 // Look into arduino-1.8.19/hardware/tools/avr/avr/include/avr/io.h to find the correct macro.
 #define __AVR_ATmega32U4__
 
+
+#include "SlowKeyboard.h"
+
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "SlowKeyboard.h"
+#include <avr/sleep.h>
+
 
 namespace Pins
 {
 
-uint8_t constexpr button = 7; // PE6, Int4
-uint8_t constexpr led = 11;
+static uint8_t constexpr button = 7; // PE6, Int4
+static uint8_t constexpr led = 11;
 
 } // namespace Pin
 
+static Keyboard_ & slowKeyboard = Keyboard;
 
-static void buttonPressed()
+static void isrAwake()
 {
-    if (digitalRead(Pins::button) == HIGH)
-    {
-        digitalWrite(Pins::led, HIGH);
-    }
-    else
-    {
-        digitalWrite (Pins::led, LOW);
-    }
+    detachInterrupt(digitalPinToInterrupt(Pins::button));
 }
 
+void enterSleepMode(void)
+{
+    attachInterrupt(digitalPinToInterrupt(Pins::button), isrAwake, LOW);
+    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    sleep_enable();
+    sleep_mode();
+    sleep_disable();
+}
 
 void setup()
 {
     pinMode(Pins::button, INPUT_PULLUP);
     pinMode(Pins::led, OUTPUT);
 
-    attachInterrupt(digitalPinToInterrupt(Pins::button), buttonPressed, CHANGE);
-
     // initialize control over the keyboard:
-    Keyboard_ & slowKeyboard = Keyboard;
 //    slowKeyboard.minimumReportDelayUs = 8000;
 
     slowKeyboard.begin(KeyboardLayout_de_DE);
 
-    // Wait for Arduino to be up and running.
-//    delay(2000);
-    for (unsigned index = 0; index < 2; ++index)
+    USBCON = 0;
+    while (true)
     {
-        digitalWrite(Pins::led, HIGH);
-        delay(500);
-        digitalWrite(Pins::led, LOW);
-        delay(500);
+        enterSleepMode();
+
+        USBDevice.attach();
+
+        delay(600);
+
+        slowKeyboard.print("Hello, World! or something other very extensive one should know about...");
+        Keyboard.write(KEY_RETURN);
+
+        USBCON = 0;
     }
-
-    // Type "Hello World!".
-    slowKeyboard.print("Hello, World!");
-
-    Keyboard.write(KEY_RETURN);
 
     // finalize
     slowKeyboard.end();
-
-//    interrupts();
 }
 
 void loop()
 {
-    // do nothing
+    // notify error condition
+    digitalWrite(Pins::led, HIGH);
+    delay(500);
+    digitalWrite (Pins::led, LOW);
+    delay(500);
 }
