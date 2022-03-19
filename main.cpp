@@ -36,8 +36,27 @@ uint8_t constexpr led = 11;
 
 } // namespace Pin
 
+
+static void buttonPressed()
+{
+    if (digitalRead(Pins::button) == HIGH)
+    {
+        digitalWrite(Pins::led, HIGH);
+    }
+    else
+    {
+        digitalWrite (Pins::led, LOW);
+    }
+}
+
+
 void setup()
 {
+    pinMode(Pins::button, INPUT_PULLUP);
+    pinMode(Pins::led, OUTPUT);
+
+    attachInterrupt(digitalPinToInterrupt(Pins::button), buttonPressed, CHANGE);
+
     // initialize control over the keyboard:
     Keyboard_ & slowKeyboard = Keyboard;
 //    slowKeyboard.minimumReportDelayUs = 8000;
@@ -48,12 +67,10 @@ void setup()
 //    delay(2000);
     for (unsigned index = 0; index < 2; ++index)
     {
-        pinMode(Pins::led, OUTPUT);
-        digitalWrite(Pins::led, HIGH);   // turn the LED on (HIGH is the voltage level)
-        delay(500);                       // wait for a second
-        digitalWrite(Pins::led, LOW);    // turn the LED off by making the voltage LOW
-        delay(500);                       // wait for a second
-        pinMode(Pins::led, INPUT);
+        digitalWrite(Pins::led, HIGH);
+        delay(500);
+        digitalWrite(Pins::led, LOW);
+        delay(500);
     }
 
     // Type "Hello World!".
@@ -63,6 +80,8 @@ void setup()
 
     // finalize
     slowKeyboard.end();
+
+//    interrupts();
 }
 
 void loop()
