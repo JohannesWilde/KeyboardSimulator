@@ -42,15 +42,18 @@ static uint8_t constexpr led = 11;
 
 static Keyboard_ & slowKeyboard = Keyboard;
 
+static bool volatile buttonPressed = false;
+
 static void isrAwake()
 {
     detachInterrupt(digitalPinToInterrupt(Pins::button));
+    buttonPressed = true;
 }
 
 void enterSleepMode(void)
 {
     attachInterrupt(digitalPinToInterrupt(Pins::button), isrAwake, LOW);
-    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    set_sleep_mode(SLEEP_MODE_IDLE);
     sleep_enable();
     sleep_mode();
     sleep_disable();
@@ -66,19 +69,23 @@ void setup()
 
     slowKeyboard.begin(KeyboardLayout_de_DE);
 
-    USBCON = 0;
+    delay(600);
+
     while (true)
     {
         enterSleepMode();
 
-        USBDevice.attach();
+        if (buttonPressed)
+        {
+            slowKeyboard.print("Hello, World! or something other very extensive one should know about...");
+            Keyboard.write(KEY_RETURN);
 
-        delay(600);
-
-        slowKeyboard.print("Hello, World! or something other very extensive one should know about...");
-        Keyboard.write(KEY_RETURN);
-
-        USBCON = 0;
+            buttonPressed = false;
+        }
+        else
+        {
+            // intentionally empty
+        }
     }
 
     // finalize
