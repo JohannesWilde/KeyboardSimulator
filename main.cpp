@@ -27,6 +27,7 @@
 #include "SlowKeyboard.h"
 
 #include <Arduino.h>
+#include <EEPROM.h>
 #include <Wire.h>
 
 #include <avr/pgmspace.h>
@@ -73,6 +74,14 @@ static uint8_t constexpr led = 11;
 
 } // namespace Pin
 
+namespace EepromAddresses
+{
+
+static uint8_t constexpr selectedMessageIndex = 0;
+
+} // namespace EepromAddresses
+
+
 static Keyboard_ & slowKeyboard = Keyboard;
 
 static bool volatile buttonPressed = false;
@@ -99,6 +108,12 @@ void setup()
 {
     pinMode(Pins::button, INPUT_PULLUP);
     pinMode(Pins::led, OUTPUT);
+
+    EEPROM.get(EepromAddresses::selectedMessageIndex, messageIndex);
+    if (Messages::count <= messageIndex)
+    {
+        messageIndex = 0;
+    }
 
     // initialize control over the keyboard:
 //    slowKeyboard.minimumReportDelayUs = 8000;
@@ -178,6 +193,7 @@ void setup()
                 if (0 < buttonPresses)
                 {
                     messageIndex = buttonPresses - 1;
+                    EEPROM.put(EepromAddresses::selectedMessageIndex, messageIndex);
                 }
             }
             else
