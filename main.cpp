@@ -118,8 +118,10 @@ void setup()
 
     slowKeyboard.begin(KeyboardLayout_de_DE);
 
+    digitalWrite(Pins::led, HIGH);
     // Wait for the USB connection to become operational.
     delay(600);
+    digitalWrite(Pins::led, LOW);
 
     while (true)
     {
