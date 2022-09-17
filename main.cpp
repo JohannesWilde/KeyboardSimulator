@@ -19,10 +19,6 @@
   https://www.arduino.cc/en/Tutorial/BuiltInExamples/KeyboardSerial
 */
 
-// WIP: Only for development purposes, so that QtCreator correctly finds Serial and Keyboard instances.
-// Look into arduino-1.8.19/hardware/tools/avr/avr/include/avr/io.h to find the correct macro.
-#define __AVR_ATmega32U4__
-
 
 #include "SlowKeyboard.h"
 
