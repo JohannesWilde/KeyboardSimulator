@@ -69,8 +69,8 @@ char const * getMessage(size_t const index)
 namespace Pins
 {
 
-static uint8_t constexpr button = 7; // PE6, Int4
-static uint8_t constexpr led = 11;
+static uint8_t constexpr button = PIN_SPI_MISO; // PE6, Int4
+static uint8_t constexpr led = LED_BUILTIN;
 
 } // namespace Pin
 
@@ -89,15 +89,16 @@ static bool volatile buttonPressed = false;
 static size_t messageIndex = 0;
 
 
-static void isrAwake()
+ISR(PCINT0_vect)
 {
-    detachInterrupt(digitalPinToInterrupt(Pins::button));
-    buttonPressed = true;
+    PCICR &= ~PCIE0; // Disable pin change interrupt for PCINT7..0 of Atmega 32u4.
 }
 
 void enterSleepMode(void)
 {
-    attachInterrupt(digitalPinToInterrupt(Pins::button), isrAwake, LOW);
+    static_assert(PIN_SPI_MISO == Pins::button); // Make sure we are talking about the same pin here and everywhere else.
+    PCIFR |= PCIF0; // Clear interrupt flag for PCINT7..0 of Atmega 32u4.
+    PCICR |= PCIE0; // Enable pin change interrupt for PCINT7..0 of Atmega 32u4.
     set_sleep_mode(SLEEP_MODE_IDLE);
     sleep_enable();
     sleep_mode();
@@ -106,6 +107,7 @@ void enterSleepMode(void)
 
 void setup()
 {
+    PCMSK0 = PCINT3; // Enable pin change interrupt for PB3 [Arduino Pin PIN_SPI_MISO].
     pinMode(Pins::button, INPUT_PULLUP);
     pinMode(Pins::led, OUTPUT);
 
@@ -126,6 +128,7 @@ void setup()
     while (true)
     {
         enterSleepMode();
+        buttonPressed = (LOW == digitalRead(Pins::button));
 
         if (buttonPressed)
         {
