@@ -128,11 +128,13 @@ void setup()
             bool longPress = false;
             {
                 unsigned long const timePressed = millis();
-                delay(50);
+                delay(50); // debounce
+
+                // Wait for the button to be released.
                 while (LOW == digitalRead(Pins::button))
                 {
-                    // wait for the button to be released
                     unsigned long const now = millis();
+                    // If the button is held low for more than 250ms consider it a long press.
                     if (250 < (now - timePressed))
                     {
                         longPress = true;
@@ -143,9 +145,9 @@ void setup()
 
             if (longPress)
             {
-                // change the selected message
+                // Update the selected message index.
 
-                unsigned long constexpr timeout = 2000;
+                unsigned long constexpr timeout = 2000; // milliseconds
                 bool timedOut = false;
                 size_t buttonPresses = 0;
 
@@ -154,7 +156,7 @@ void setup()
                     {
                         // check whether pressed again
                         unsigned long const timeReleased = millis();
-                        delay(50);
+                        delay(50); // debounce
                         while ((HIGH == digitalRead(Pins::button)) && !timedOut)
                         {
                             if (timeout < (millis() - timeReleased))
@@ -168,10 +170,11 @@ void setup()
                     {
                         // wait to be released again
                         unsigned long const timePressed = millis();
-                        digitalWrite(Pins::led, LOW);
-                        delay(50);
+                        digitalWrite(Pins::led, LOW); // Turn off LED temporarily when pressed.
+                        delay(50); // debounce
                         while ((LOW == digitalRead(Pins::button)))
                         {
+                            // Turn LED back on after 500ms.
                             if (500 < (millis() - timePressed))
                             {
                                 digitalWrite(Pins::led, HIGH);
@@ -179,12 +182,13 @@ void setup()
                         }
                         digitalWrite(Pins::led, HIGH);
 
+                        // Confine to available number of messages.
                         buttonPresses = (buttonPresses + 1) % Messages::count;
                     }
                 }
                 while (!timedOut);
 
-                digitalWrite(Pins::led, LOW);
+                digitalWrite(Pins::led, LOW); // Selection finished, so turn off LED again.
 
                 if (0 < buttonPresses)
                 {
