@@ -69,12 +69,12 @@ void keyboardFunction5(Keyboard_ & keyboard)
     keyboard.write(KEY_RETURN);
 }
 
-KeyboardFunction const array[] = {keyboardFunction0,
-                                  keyboardFunction1,
-                                  keyboardFunction2,
-                                  keyboardFunction3,
-                                  keyboardFunction4,
-                                  keyboardFunction5};
+KeyboardFunction constexpr array[] = {keyboardFunction0,
+                                      keyboardFunction1,
+                                      keyboardFunction2,
+                                      keyboardFunction3,
+                                      keyboardFunction4,
+                                      keyboardFunction5};
 
 static size_t constexpr count = sizeof(array) / sizeof(array[0]);
 
