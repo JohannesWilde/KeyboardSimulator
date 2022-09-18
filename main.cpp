@@ -121,7 +121,6 @@ void setup()
 
     while (true)
     {
-        enterSleepMode();
         buttonPressed = (LOW == digitalRead(Pins::button));
 
         if (buttonPressed)
@@ -206,6 +205,9 @@ void setup()
         {
             // intentionally empty
         }
+        
+        // Conserve power by going to sleep now.
+        enterSleepMode();
     }
 
     // finalize
