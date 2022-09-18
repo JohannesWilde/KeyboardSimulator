@@ -182,8 +182,10 @@ void setup()
                         }
                         digitalWrite(Pins::led, HIGH);
 
-                        // Confine to available number of messages.
-                        buttonPresses = (buttonPresses + 1) % Messages::count;
+                        // Note button press.
+                        // Please note that this will overflow ungracefully, so don't press the button more
+                        // than std::numeric_limits<size_t>::max() times, i.e. 65535 for 16-bit.
+                        buttonPresses += 1;
                     }
                 }
                 while (!timedOut);
@@ -192,7 +194,9 @@ void setup()
 
                 if (0 < buttonPresses)
                 {
-                    messageIndex = buttonPresses - 1;
+                    // Change to zero-based index and confine to available number of messages..
+                    messageIndex = (buttonPresses - 1) % Messages::count;
+                    // Remember messageIndex even after power off.
                     EEPROM.put(EepromAddresses::selectedMessageIndex, messageIndex);
                 }
             }
