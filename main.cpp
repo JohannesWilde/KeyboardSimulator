@@ -1,22 +1,18 @@
 /*
-  Keyboard test
+  Keaboard Simulator
 
-  For the Arduino Leonardo, Micro or Due
+  Sends one of the supplied messages as keyboard-inputs to the
+  connected USB host.
 
-  Reads a byte from the serial port, sends a keystroke back.
-  The sent keystroke is one higher than what's received, e.g. if you send a,
-  you get b, send A you get B, and so forth.
+  The message to be sent can be selected by long-pressing the button
+  and afterwards cycling through them with normal button presses [starting
+  from the first one].
+  The selected message number will be remembered even when powered off.
 
   The circuit:
-  - none
+  Lily TTGO USB with button between MISO and GND [see drawing.svg].
 
-  created 21 Oct 2011
-  modified 27 Mar 2012
-  by Tom Igoe
-
-  This example code is in the public domain.
-
-  https://www.arduino.cc/en/Tutorial/BuiltInExamples/KeyboardSerial
+  This code is in the public domain.
 */
 
 
