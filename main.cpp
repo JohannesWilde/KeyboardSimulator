@@ -36,12 +36,16 @@ namespace Internal
 
 static size_t constexpr maximumMessageLength = 50;
 
-char const string_0[] PROGMEM = "String 0";
+// The non-printable characters noted in SlowKeyboard.h can be
+// encoded in these string as well
+// [e.g. KEY_RETURN = 0xB0 -> "...\xB0..."].
+
+char const string_0[] PROGMEM = "String 0\xB0";
 char const string_1[] PROGMEM = "String 1";
-char const string_2[] PROGMEM = "String 2";
-char const string_3[] PROGMEM = "String 3";
-char const string_4[] PROGMEM = "String 4";
-char const string_5[] PROGMEM = "String 5";
+char const string_2[] PROGMEM = "String 2\xB0";
+char const string_3[] PROGMEM = "String 3\xB0";
+char const string_4[] PROGMEM = "String 4\xB0";
+char const string_5[] PROGMEM = "String 5\xB0";
 
 char const * const array[] PROGMEM = {string_0, string_1, string_2, string_3, string_4, string_5};
 
@@ -204,7 +208,6 @@ void setup()
             {
                 // write out the message for a short press of the button
                 slowKeyboard.print(Messages::getMessage(messageIndex));
-                Keyboard.write(KEY_RETURN);
             }
 
             buttonPressed = false;
