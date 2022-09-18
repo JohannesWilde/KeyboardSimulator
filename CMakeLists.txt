@@ -8,22 +8,28 @@ set(ARDUINO_BOARD "avr.micro") # Arduino Micro
 
 project(KeyboardSimulator C CXX)
 
+
 set(TARGET_NAME KeyboardSimulator)
 
 add_executable(${TARGET_NAME}
+    KeyboardLayout_de_DE.cpp
+    KeyboardLayout_en_US.cpp
+    KeyboardLayout_es_ES.cpp
+    KeyboardLayout_fr_FR.cpp
+    KeyboardLayout_it_IT.cpp
+    KeyboardLayout.h
     main.cpp
+    SlowKeyboard.cpp
+    SlowKeyboard.h
 )
 
-# global Arduino libraries
 target_link_arduino_libraries(${TARGET_NAME}
+    # global Arduino libraries
     PRIVATE core
-    PRIVATE Keyboard
+    PRIVATE HID
+    PRIVATE Wire
+    # local Arduino libraries
 )
-
-## local Arduino libraries
-#target_link_arduino_libraries(${TARGET_NAME}
-#    PRIVATE
-#)
 
 # This Arduino specific statement is required in order to generate HEX
 # and upload it to the board. May be removed in future, but currently
@@ -31,4 +37,3 @@ target_link_arduino_libraries(${TARGET_NAME}
 if (ARDUINO)
     target_enable_arduino_upload(${TARGET_NAME})
 endif()
-
