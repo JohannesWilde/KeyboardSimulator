@@ -31,34 +31,52 @@
 namespace Messages
 {
 
-namespace Internal
+typedef void (*KeyboardFunction)(Keyboard_ & keyboard);
+
+void keyboardFunction0(Keyboard_ & keyboard)
 {
-
-static size_t constexpr maximumMessageLength = 50;
-
-// The non-printable characters noted in SlowKeyboard.h can be
-// encoded in these string as well
-// [e.g. KEY_RETURN = 0xB0 -> "...\xB0..."].
-
-char const string_0[] PROGMEM = "String 0\xB0";
-char const string_1[] PROGMEM = "String 1";
-char const string_2[] PROGMEM = "String 2\xB0";
-char const string_3[] PROGMEM = "String 3\xB0";
-char const string_4[] PROGMEM = "String 4\xB0";
-char const string_5[] PROGMEM = "String 5\xB0";
-
-char const * const array[] PROGMEM = {string_0, string_1, string_2, string_3, string_4, string_5};
-
-} // namespace Internal
-
-static size_t constexpr count = sizeof(Internal::array) / sizeof(Internal::array[0]);
-
-char const * getMessage(size_t const index)
-{
-    static char buffer[Internal::maximumMessageLength + 1] = {0};
-    strncpy_P(buffer, (char *)pgm_read_word(&(Internal::array[index])), Internal::maximumMessageLength);
-    return buffer;
+    keyboard.print(F("String 0"));
+    keyboard.write(KEY_RETURN);
 }
+
+void keyboardFunction1(Keyboard_ & keyboard)
+{
+    keyboard.print(F("String 1"));
+    keyboard.write(KEY_RETURN);
+}
+
+void keyboardFunction2(Keyboard_ & keyboard)
+{
+    keyboard.print(F("String 2"));
+    keyboard.write(KEY_RETURN);
+}
+
+void keyboardFunction3(Keyboard_ & keyboard)
+{
+    keyboard.print(F("String 3"));
+    keyboard.write(KEY_RETURN);
+}
+
+void keyboardFunction4(Keyboard_ & keyboard)
+{
+    keyboard.print(F("String 4"));
+    keyboard.write(KEY_RETURN);
+}
+
+void keyboardFunction5(Keyboard_ & keyboard)
+{
+    keyboard.print(F("String 5"));
+    keyboard.write(KEY_RETURN);
+}
+
+KeyboardFunction const array[] = {keyboardFunction0,
+                                  keyboardFunction1,
+                                  keyboardFunction2,
+                                  keyboardFunction3,
+                                  keyboardFunction4,
+                                  keyboardFunction5};
+
+static size_t constexpr count = sizeof(array) / sizeof(array[0]);
 
 } // namespace Messages
 
@@ -207,7 +225,7 @@ void setup()
             else
             {
                 // write out the message for a short press of the button
-                slowKeyboard.print(Messages::getMessage(messageIndex));
+                Messages::array[messageIndex](slowKeyboard);
             }
 
             buttonPressed = false;
